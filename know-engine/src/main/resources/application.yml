@@ -75,13 +75,14 @@ mybatis-plus:
 langchain4j:
   open-ai:
     chat-model:
-      api-key: @dashscope.api.key@
+      api-key: sk-9090ef112cab4d41ba5690532012d8db
       model-name: qwen-max-latest
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       log-requests: true
       log-responses: true
+      search-strategy: hybrid # vector, hybrid, hybrid_rerank
     streaming-chat-model:
-      api-key: @dashscope.api.key@
+      api-key: sk-9090ef112cab4d41ba5690532012d8db
       model-name: qwen-max-latest
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       log-requests: true
@@ -98,15 +99,15 @@ elasticsearch:
   host: http://127.0.0.1:9200
   base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
   model-name: text-embedding-v4
-  api-key: @dashscope.api.key@
+  api-key: sk-9090ef112cab4d41ba5690532012d8db
   dimensions: 1536
 
 minio:
-  url: http://localhost:9000
+  url: http://8.136.195.83:9000
   accessKey: minioadmin
   secretKey: minioadmin
-  bucketName: know-engine
-  endpoint: http://localhost:9000
+  bucketName: knowengine2
+  endpoint: http://8.136.195.83:9000
 
 neo4j:
   uri: bolt://localhost:7687
@@ -117,7 +118,7 @@ neo4j:
 file:
   parse:
     api:
-      url: http://47.104.64.223:8000 # 文档解析接口地址，记得改成你自己的
+      url: http://8.136.195.83:8000 # 文档解析接口地址，记得改成你自己的
 
 # XXL-Job 配置
 xxl:

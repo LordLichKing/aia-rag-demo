@@ -1,0 +1,90 @@
+# Architecture Document
+
+## 1. System Overview
+
+The platform is built on a cloud-native microservices architecture designed for high availability, scalability, and maintainability.
+
+### 1.1 Core Components
+
+```
+                    ┌─────────────┐
+                    │   CDN/WAF   │
+                    └──────┬──────┘
+                           │
+                    ┌──────▼──────┐
+                    │ API Gateway │
+                    └──────┬──────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+       ┌──────▼──────┐ ┌──▼───┐ ┌──────▼──────┐
+       │ User Service│ │Order │ │   Payment   │
+       │             │ │Service│ │   Service   │
+       └──────┬──────┘ └──┬───┘ └──────┬──────┘
+              │            │            │
+              └────────────┼────────────┘
+                           │
+                    ┌──────▼──────┐
+                    │   Kafka     │
+                    │  Message    │
+                    │   Broker    │
+                    └──────┬──────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+       ┌──────▼──────┐ ┌──▼───┐ ┌──────▼──────┐
+       │Notification │ │Data  │ │   Search    │
+       │  Service    │ │Service│ │   Service   │
+       └─────────────┘ └──────┘ └─────────────┘
+```
+
+### 1.2 Technology Stack
+
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Frontend | React + TypeScript | 18.x |
+| API Gateway | Kong | 3.x |
+| Backend | Python (FastAPI) / Go | 3.11 / 1.21 |
+| Message Queue | Apache Kafka | 3.6 |
+| Database | PostgreSQL + Redis | 16 + 7.x |
+| Search | Elasticsearch | 8.x |
+| Container | Docker + Kubernetes | 1.28 |
+| Monitoring | Prometheus + Grafana | - |
+
+## 2. Security Architecture
+
+### 2.1 Authentication & Authorization
+
+- OAuth 2.0 + OpenID Connect for user authentication
+- RBAC (Role-Based Access Control) for authorization
+- JWT tokens with short expiration (2 hours)
+- Refresh token rotation for security
+
+### 2.2 Network Security
+
+- All inter-service communication uses mTLS
+- Network policies enforce least-privilege access
+- WAF (Web Application Firewall) at the edge
+- DDoS protection via CDN provider
+
+### 2.3 Data Encryption
+
+- At rest: AES-256 encryption
+- In transit: TLS 1.3
+- Key management: HashiCorp Vault
+
+## 3. Scalability
+
+### 3.1 Horizontal Scaling
+
+All stateless services support horizontal scaling via Kubernetes HPA (Horizontal Pod Autoscaler):
+- CPU threshold: 70%
+- Memory threshold: 80%
+- Min replicas: 2
+- Max replicas: 20
+
+### 3.2 Database Scaling
+
+- Read replicas for read-heavy workloads
+- Connection pooling via PgBouncer
+- Sharding for large tables (>50M rows)

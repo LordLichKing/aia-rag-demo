@@ -45,6 +45,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 文档处理服务实现类
@@ -78,6 +80,8 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     @Value("${minio.bucketName}")
     private String bucketName;
 
+    private ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(10);
+
     @Override
     @DistributeLock(scene = "document-upload", keyExpression = "#uploadUser", waitTime = 0)
     public KnowledgeDocument upload(DocumentUploadParam documentUploadParam) throws IOException {
@@ -110,14 +114,17 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
             if (document.getKnowledgeBaseType() == KnowledgeBaseType.DOCUMENT_SEARCH) {
                 document.setStatus(DocumentStatus.CONVERTED);
                 document.setConvertedDocUrl(fileUrl);
-                result = knowledgeDocumentService.updateById(document);
-                Assert.isTrue(result, "文件状态更新失败");
+                Assert.isTrue(knowledgeDocumentService.updateById(document), "文件状态更新失败");
             } else {
                 document.setStatus(DocumentStatus.STORED);
                 document.setConvertedDocUrl(fileUrl);
-                result = knowledgeDocumentService.updateById(document);
-                Assert.isTrue(result, "文件状态更新失败");
+                Assert.isTrue(knowledgeDocumentService.updateById(document), "文件状态更新失败");
             }
+//            threadPoolExecutor.submit(() -> {
+//
+//            });
+
+
             return document;
         } catch (Exception e) {
             throw new IOException("文件上传失败: " + e.getMessage(), e);
@@ -134,7 +141,7 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
 
         if (document.getStatus() == DocumentStatus.CHUNKED) {
             // 返回已切分的分段数量
-            Long chunkedCount = knowledgeSegmentService.count(new QueryWrapper<KnowledgeSegment>().eq("document_id", document.getDocId()).eq("skipEmbedding", 0));
+            Long chunkedCount = knowledgeSegmentService.count(new QueryWrapper<KnowledgeSegment>().eq("document_id", document.getDocId()).eq("skip_embedding", 0));
             return chunkedCount.intValue();
         }
 
@@ -212,7 +219,6 @@ public class DocumentProcessServiceImpl implements DocumentProcessService {
     }
 
     @Override
-    @DistributeLock(scene = "document-split", keyExpression = "#document.docId", waitTime = 0)
     public boolean embedAndStore(KnowledgeDocument document) {
         if (document == null) {
             return false;

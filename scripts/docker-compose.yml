@@ -104,6 +104,7 @@ services:
       - network.host=0.0.0.0
     volumes:
       - D:/aia-rag/elasticsearch/data:/usr/share/elasticsearch/data
+      - D:/aia-rag/elasticsearch/config:/usr/share/elasticsearch/config
     networks:
       - app-network
 

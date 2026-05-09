@@ -1,0 +1,82 @@
+============================================================
+RAG Service Operations Report
+Generated at: 2026-05-11T13:35:49.963324
+============================================================
+
+## Overall
+  Total Queries:    45
+  Uptime (seconds): 292.3
+
+## Overall Latency
+  P50:  6.363s
+  P95:  14.678s
+  Min:  0.0s
+  Max:  15.91s
+  Avg:  6.474s
+
+## Overall Quality
+  Cache Hit Rate:              0.00%
+  Refusal Rate:                6.67%
+  Avg Confidence:              0.8768
+  Avg Faithfulness Estimate:   0.9859
+  Avg Context Relevance Est:   0.0252
+
+## Overall Token Usage
+  Total Prompt Tokens:     57100
+  Total Completion Tokens: 3465
+  Total Tokens:            60565
+  Avg Tokens per Query:    1345.9
+
+## Refusal Reasons
+  - prompt_injection: 3
+
+============================================================
+## Per-Mode Breakdown
+============================================================
+
+### Mode: hybrid
+  Queries:           15
+  Latency P50:       5.796s
+  Latency P95:       14.678s
+  Latency Avg:       6.088s
+  Cache Hit Rate:    0.00%
+  Refusal Rate:      6.67%
+  Avg Confidence:    0.9308
+  Avg Faithfulness:  0.986
+  Total Tokens:      19625
+
+### Mode: hybrid+rerank
+  Queries:           15
+  Latency P50:       6.088s
+  Latency P95:       15.91s
+  Latency Avg:       6.738s
+  Cache Hit Rate:    0.00%
+  Refusal Rate:      6.67%
+  Avg Confidence:    0.7662
+  Avg Faithfulness:  0.9957
+  Total Tokens:      20492
+
+### Mode: vector
+  Queries:           15
+  Latency P50:       6.653s
+  Latency P95:       15.196s
+  Latency Avg:       6.595s
+  Cache Hit Rate:    0.00%
+  Refusal Rate:      6.67%
+  Avg Confidence:    0.9333
+  Avg Faithfulness:  0.9759
+  Total Tokens:      20448
+
+### Mode Comparison
+
+  Metric                   hybrid            hybrid+rerank     vector            
+  -------------------------------------------------------------------------------
+  Latency Avg              6.088s            6.738s            6.595s            
+  Latency P95              14.678s           15.91s            15.196s           
+  Avg Faithfulness         0.986             0.9957            0.9759            
+  Avg Confidence           0.9308            0.7662            0.9333            
+  Cache Hit Rate           0.00%             0.00%             0.00%             
+  Refusal Rate             6.67%             6.67%             6.67%             
+  Total Tokens             19625             20492             20448             
+
+============================================================

@@ -35,7 +35,9 @@ import dev.langchain4j.rag.content.retriever.elasticsearch.ElasticsearchContentR
 import dev.langchain4j.rag.query.Query;
 import dev.langchain4j.rag.query.router.DefaultQueryRouter;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchConfiguration;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchConfigurationFullText;
+import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchConfigurationHybrid;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchConfigurationKnn;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletResponse;
@@ -160,7 +162,7 @@ public class RagModuleController {
     public Flux<String> testRetriever(String query, String chatMessageId, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
 
-//        ElasticsearchConfiguration configuration = ElasticsearchConfigurationHybrid.builder().build();
+        ElasticsearchConfiguration configuration = ElasticsearchConfigurationHybrid.builder().build();
 
 //        ElasticsearchContentRetriever contentRetriever = ElasticsearchContentRetriever.builder()
 //                .restClient(restClient)

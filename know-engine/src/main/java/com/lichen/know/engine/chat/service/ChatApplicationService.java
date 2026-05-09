@@ -4,6 +4,7 @@ import com.lichen.know.engine.ai.service.KnowEngineChatAiService;
 import com.lichen.know.engine.ai.service.PromptService;
 import com.lichen.know.engine.chat.entity.ChatParam;
 import com.lichen.know.engine.document.service.KnowledgeSegmentService;
+import com.lichen.know.engine.rag.constant.SearchStrategy;
 import com.lichen.know.engine.rag.modules.KnowEngineElasticsearchContentRetriever;
 import com.lichen.know.engine.rag.modules.KnowEngineQueryRouter;
 import com.lichen.know.engine.rag.modules.KnowEngineQueryTransformer;
@@ -22,9 +23,11 @@ import dev.langchain4j.model.scoring.onnx.OnnxScoringModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.rag.content.aggregator.ContentAggregator;
+import dev.langchain4j.rag.content.aggregator.DefaultContentAggregator;
 import dev.langchain4j.rag.content.aggregator.ReRankingContentAggregator;
 import dev.langchain4j.rag.content.injector.ContentInjector;
 import dev.langchain4j.rag.content.injector.DefaultContentInjector;
+import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.elasticsearch.ElasticsearchContentRetriever;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchConfigurationFullText;
@@ -32,6 +35,7 @@ import dev.langchain4j.store.embedding.elasticsearch.ElasticsearchConfigurationK
 import org.elasticsearch.client.RestClient;
 import org.neo4j.driver.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
@@ -74,6 +78,9 @@ public class ChatApplicationService {
     @Autowired
     private ChatMessageService chatMessageService;
 
+    @Value("${langchain.open-ai.chat-model.search-strategy:hybrid}")
+    private String searchStrategy;
+
     /**
      * 流式对话（无进度回调）
      */
@@ -115,7 +122,7 @@ public class ChatApplicationService {
                     KnowEngineQueryTransformer queryTransformer = new KnowEngineQueryTransformer(chatModel, chatParam.messageId(), callback);
 
                     ProgressAwareContentRetriever embeddingRetriever = new ProgressAwareContentRetriever(KnowEngineElasticsearchContentRetriever.builder()
-                            .configuration(ElasticsearchConfigurationKnn.builder().build())
+                            .configuration(ElasticsearchConfigurationKnn.builder().numCandidates(5).build())
                             .maxResults(5)
                             .minScore(0.5)
                             .embeddingModel(openAiEmbeddingModel)
@@ -145,25 +152,40 @@ public class ChatApplicationService {
                             .chatModel(chatModel)
                             .build(), callback);
 
-                    OnnxScoringModel scoringModel = BgeScoringModel.getInstance();
-
-                    // 使用带进度通知的聚合器包装原始聚合器
-                    ContentAggregator contentAggregator = new ProgressAwareContentAggregator(
-                            ReRankingContentAggregator.builder()
-                                    .scoringModel(scoringModel)
-                                    .maxResults(5)
-                                    .querySelector(queryToContents -> queryToContents.keySet().iterator().next())
-                                    .build(),
-                            callback, assistantMessageId, chatMessageService
-                    );
+                    ContentAggregator contentAggregator;
+                    if (SearchStrategy.fromString(searchStrategy) == SearchStrategy.HYBRID_RERANK) {
+                        OnnxScoringModel scoringModel = BgeScoringModel.getInstance();
+                        // 使用带进度通知的聚合器包装原始聚合器
+                        contentAggregator = new ProgressAwareContentAggregator(
+                                ReRankingContentAggregator.builder()
+                                        .scoringModel(scoringModel)
+                                        .maxResults(5)
+                                        .querySelector(queryToContents -> queryToContents.keySet().iterator().next())
+                                        .build(),
+                                callback, assistantMessageId, chatMessageService
+                        );
+                    } else {
+                        contentAggregator = new ProgressAwareContentAggregator(
+                                new DefaultContentAggregator(),
+                                callback, assistantMessageId, chatMessageService
+                        );
+                    }
 
                     String prompt = promptService.getPrompt(chatParam.intentRecognitionResult());
 
                     ContentInjector contentInjector = new DefaultContentInjector(PromptTemplate.from(prompt));
 
+
+                    List<ContentRetriever> retrievers = List.of();
+                    SearchStrategy strategy = SearchStrategy.fromString(searchStrategy);
+                    switch (strategy) {
+                        case VECTOR -> retrievers = List.of(embeddingRetriever);
+                        case HYBRID, HYBRID_RERANK -> retrievers = List.of(embeddingRetriever, fullTextRetriever, sqlRetriever, neo4jRetriever);
+                    }
+
                     // 构建查询路由器（带进度回调）
                     RetrievalAugmentor retrievalAugmentor = DefaultRetrievalAugmentor.builder()
-                            .queryRouter(new KnowEngineQueryRouter(List.of(embeddingRetriever, fullTextRetriever, sqlRetriever, neo4jRetriever), chatModel, callback))
+                            .queryRouter(new KnowEngineQueryRouter(retrievers, chatModel, callback))
                             .queryTransformer(queryTransformer)
                             .contentAggregator(contentAggregator)
                             .contentInjector(contentInjector)

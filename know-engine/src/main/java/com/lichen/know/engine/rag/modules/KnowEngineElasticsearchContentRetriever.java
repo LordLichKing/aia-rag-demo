@@ -118,6 +118,7 @@ public class KnowEngineElasticsearchContentRetriever extends AbstractElasticsear
         // 将查询文本转换为向量
         Embedding referenceEmbedding = embeddingModel.embed(query.text()).content();
         // 构建向量搜索请求，设置查询向量、最大返回数量、最低相似度分数和过滤条件
+        System.err.println("maxResults = " + maxResults);
         EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
                 .queryEmbedding(referenceEmbedding)
                 .maxResults(maxResults)

@@ -108,11 +108,10 @@
             </exclusions>
         </dependency>
 
-        <!-- ONNX Runtime (CPU) - 兼容 macOS Monterey -->
         <dependency>
             <groupId>com.microsoft.onnxruntime</groupId>
             <artifactId>onnxruntime</artifactId>
-            <version>1.17.1</version>
+            <version>1.19.2</version> <!-- 或 1.20.0 -->
         </dependency>
 
         <!--     Redis  -->
@@ -193,6 +192,13 @@
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
             <version>2.4.0</version>
+        </dependency>
+
+        <!-- SnakeYAML - YAML 解析 -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.2</version>
         </dependency>
 
     </dependencies>

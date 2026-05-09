@@ -10,12 +10,13 @@
     </parent>
 
     <groupId>com.lichen.ai</groupId>
-    <artifactId>ai-com.lichen.know.engine.rag-demo</artifactId>
+    <artifactId>ai-rag-demo</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>know-engine</module>
+        <module>simple</module>
     </modules>
 
     <properties>
@@ -23,7 +24,6 @@
         <spring.ai.version>1.1.0</spring.ai.version>
         <fastjson.version>2.0.43</fastjson.version>
         <spring.ai.alibaba.version>1.1.2.0</spring.ai.alibaba.version>
-        <!-- 统一配置API Key ，记得改成你自己的-->
         <dashscope.api.key>sk-9090ef112cab4d41ba5690532012d8db</dashscope.api.key>
     </properties>
 

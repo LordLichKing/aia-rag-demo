@@ -56,6 +56,8 @@ public class ProgressAwareContentAggregator implements ContentAggregator {
             System.out.println("[PROGRESS]:正在排序筛选结果...");
         }
 
+        log.info("queryToContents = {}", queryToContents);
+
         List<Content> results = delegate.aggregate(queryToContents);
 
         try {

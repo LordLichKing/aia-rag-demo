@@ -1,5 +1,6 @@
 package com.lichen.know.engine.chat.controller;
 
+import com.lichen.know.engine.ai.model.IntentRecognitionResult;
 import com.lichen.know.engine.ai.service.CommonChatService;
 import com.lichen.know.engine.ai.service.IntentRecognitionService;
 import com.lichen.know.engine.ai.service.TitleSummaryService;
@@ -114,18 +115,19 @@ public class ChatController {
         return Flux.just("[PROGRESS]:正在识别您的意图...")
                 .concatWith(
                         Mono.fromCallable(() -> {
-                            IntentRecognitionService intentRecognitionService = AiServices.builder(IntentRecognitionService.class).chatModel(chatModel).build();
-                            return intentRecognitionService.chat(content);
+//                            IntentRecognitionService intentRecognitionService = AiServices.builder(IntentRecognitionService.class).chatModel(chatModel).build();
+//                            return intentRecognitionService.chat(content);
+                            return new IntentRecognitionResult("", true, "", null);
                         })
                         .subscribeOn(Schedulers.boundedElastic())
                         .flatMapMany(intentRecognitionResult -> {
                             // 4. 如果用户问题不相关，使用一个通用的LLM做对话
-                            if (!intentRecognitionResult.related()) {
-                                return Flux.concat(
-                                        Flux.just("[PROGRESS]:正在为您生成回答..."),
-                                        commonChatService.streamChat(userId, content)
-                                );
-                            }
+//                            if (!intentRecognitionResult.related()) {
+//                                return Flux.concat(
+//                                        Flux.just("[PROGRESS]:正在为您生成回答..."),
+//                                        commonChatService.streamChat(userId, content)
+//                                );
+//                            }
                             // 5. 相关问题，走RAG流程（进度由内部组件发出）
                             return chatApplicationService.chat(new ChatParam(userId, finalConversationId, messageId, content, intentRecognitionResult));
                         })

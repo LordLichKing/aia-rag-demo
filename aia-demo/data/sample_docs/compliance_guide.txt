@@ -1,0 +1,61 @@
+# Compliance Guide / 合规指南
+
+## 1. Data Protection Policy / 数据保护政策
+
+### 1.1 General Principles / 一般原则
+
+All employees must comply with applicable data protection laws and regulations, including but not limited to:
+- Personal Information Protection Law (PIPL) of China
+- General Data Protection Regulation (GDPR) where applicable
+- Company internal data protection policies
+
+所有员工必须遵守适用的数据保护法律法规，包括但不限于《个人信息保护法》(PIPL) 和适用的《通用数据保护条例》(GDPR)。
+
+### 1.2 Data Classification / 数据分类
+
+Company data is classified into four levels:
+1. **Public (公开)**: Information that can be freely shared
+2. **Internal (内部)**: For internal use only
+3. **Confidential (机密)**: Restricted access, requires authorization
+4. **Top Secret (绝密)**: Highest level, extremely limited access
+
+### 1.3 Data Handling Requirements / 数据处理要求
+
+- Personal data must be collected only for specified, explicit, and legitimate purposes
+- Data minimization: collect only what is necessary
+- Retention periods must be defined and enforced
+- Cross-border data transfers require additional approvals
+
+## 2. Security Incident Response / 安全事件响应
+
+### 2.1 Reporting / 报告
+
+Security incidents must be reported immediately to the IT Security team:
+- Email: security@company.com
+- Hotline: +86-xxx-xxxx-xxxx
+- Emergency: Contact your direct supervisor
+
+安全事件必须立即报告给IT安全团队。
+
+### 2.2 Response Procedure / 响应流程
+
+1. **Identify**: Determine the nature and scope of the incident
+2. **Contain**: Take immediate steps to prevent further damage
+3. **Assess**: Evaluate the impact and severity
+4. **Notify**: Inform relevant stakeholders and authorities as required
+5. **Recover**: Restore affected systems and data
+6. **Review**: Conduct post-incident review and update procedures
+
+## 3. Code of Conduct / 行为准则
+
+### 3.1 Anti-Corruption / 反腐败
+
+The company maintains a zero-tolerance policy towards corruption and bribery. All business dealings must be conducted transparently and ethically.
+
+### 3.2 Conflict of Interest / 利益冲突
+
+Employees must disclose any potential conflicts of interest to their supervisor and the compliance department.
+
+### 3.3 Whistleblower Protection / 举报人保护
+
+The company protects employees who report violations in good faith. Reports can be made anonymously through the compliance hotline.

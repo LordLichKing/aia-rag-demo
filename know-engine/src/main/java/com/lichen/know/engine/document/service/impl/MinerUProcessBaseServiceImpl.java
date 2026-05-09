@@ -60,10 +60,10 @@ public abstract class MinerUProcessBaseServiceImpl implements FileProcessService
     @Value("${file.parse.api.url:http://localhost:8000}")
     private String fileParseApiUrl;
 
-    @Value("${file.parse.api.connectTimeout:30000}")
+    @Value("${file.parse.api.connectTimeout:120000}")
     private int connectTimeout;
 
-    @Value("${file.parse.api.responseTimeout:300000}")
+    @Value("${file.parse.api.responseTimeout:1200000}")
     private int responseTimeout;
 
     /**
@@ -389,6 +389,7 @@ public abstract class MinerUProcessBaseServiceImpl implements FileProcessService
      * 需要注意的是，如果你用的是外部的模型，这个url需要是公网可以访问的url。否则模型需要能和MinIO进行内网通信。
      */
     public String generateImageDescription(String imageUrl) {
+        System.err.println("--------------------------------chatModelApiKey = " + chatModelApiKey);
         OpenAiChatModel chatModel = OpenAiChatModel.builder()
                 .apiKey(chatModelApiKey)
                 .baseUrl(chatModelBaseUrl)
